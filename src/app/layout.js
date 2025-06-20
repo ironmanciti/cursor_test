@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar, { SidebarItem } from "../components/Sidebar";
-import { Home, LayoutDashboard } from "lucide-react";
+import { Home, LayoutDashboard, Play } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +17,8 @@ export default function RootLayout({ children }) {
         <div className="flex">
           <Sidebar>
             <SidebarItem icon={<Home size={20} />} text="Home" href="/" />
-            <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" href="/dashboard" active />
+            <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" href="/dashboard" />
+            <SidebarItem icon={<Play size={20} />} text="Playground" href="/playground" />
           </Sidebar>
           <main className="flex-1">
             {children}
