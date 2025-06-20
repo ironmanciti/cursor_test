@@ -1,13 +1,16 @@
 'use client'
 
 import { useState, createContext, useContext } from 'react'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
+import Image from 'next/image'
 
 const SidebarContext = createContext()
 
 export default function Sidebar({ children }) {
   const [expanded, setExpanded] = useState(false)
+  const { data: session } = useSession();
 
   return (
     <aside 
@@ -30,25 +33,49 @@ export default function Sidebar({ children }) {
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
 
-        <div className="border-t flex p-3">
-          <img
-            src="https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=User"
-            alt=""
-            className="w-10 h-10 rounded-md"
-          />
-          <div
-            className={`
-              flex justify-between items-center
-              overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}
-          `}
-          >
-            <div className="leading-4">
-              <h4 className="font-semibold">John Doe</h4>
-              <span className="text-xs text-gray-600">johndoe@gmail.com</span>
+        {session ? (
+          <div className="border-t flex p-3 items-center">
+            <img
+              src={session.user.image}
+              alt=""
+              className="w-10 h-10 rounded-md"
+            />
+            
+            <div
+              className={`
+                flex-1 ml-3 overflow-hidden transition-all
+                ${expanded ? "w-auto" : "w-0"}
+              `}
+            >
+              <div className="leading-4">
+                <h4 className="font-semibold truncate">{session.user.name}</h4>
+                <span className="text-xs text-gray-600">{session.user.email}</span>
+              </div>
             </div>
-            <MoreVertical size={20} />
+
+            <div className="relative group">
+                <button onClick={() => signOut()} className="p-1.5 rounded-lg hover:bg-gray-100">
+                    <LogOut size={20} />
+                </button>
+                {!expanded && (
+                <div
+                    className={`
+                      absolute top-1/2 -translate-y-1/2 left-full rounded-md px-2 py-1 ml-2
+                      bg-indigo-100 text-indigo-800 text-sm whitespace-nowrap
+                      invisible opacity-20 -translate-x-3 transition-all
+                      group-hover:visible group-hover:opacity-100 group-hover:translate-x-0
+                    `}
+                >
+                    Sign Out
+                </div>
+                )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="border-t p-3">
+            {/* You can add a sign-in button here if you want */}
+          </div>
+        )}
       </nav>
     </aside>
   )
