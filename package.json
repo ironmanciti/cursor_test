@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.60",
+    "@langchain/langgraph": "^0.3.4",
+    "@langchain/openai": "^0.5.14",
     "@supabase/supabase-js": "^2.50.0",
+    "langchain": "^0.3.29",
+    "langsmith": "^0.3.33",
     "lucide-react": "^0.518.0",
     "next": "15.3.4",
     "react": "^19.0.0",
@@ -17,6 +22,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^5.8.3"
   }
 }
