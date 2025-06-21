@@ -53,9 +53,9 @@ export default function Home() {
     const displayName = user.user_metadata?.full_name || user.email;
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-2">Welcome back, {displayName}!</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Welcome back, {displayName}!</h1>
           <p className="text-gray-600">Where would you like to go?</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
@@ -81,7 +81,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-sm p-8 space-y-8 bg-white shadow-lg rounded-2xl text-center">
+      <div className="w-full max-w-sm p-6 sm:p-8 space-y-8 bg-white shadow-lg rounded-2xl text-center">
         <div>
           <Image
             className="dark:invert mx-auto mb-6"

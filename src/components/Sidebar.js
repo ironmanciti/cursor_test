@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, createContext, useContext } from 'react'
-import { MoreVertical, LogOut } from 'lucide-react'
+import { MoreVertical, LogOut, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
@@ -14,8 +14,8 @@ const supabase = createClient(
 
 const SidebarContext = createContext()
 
-export default function Sidebar({ children }) {
-  const [expanded, setExpanded] = useState(false)
+export default function Sidebar({ children, isMobileMenuOpen, setMobileMenuOpen }) {
+  const [expanded, setExpanded] = useState(true)
   const [session, setSession] = useState(null);
   const router = useRouter();
 
@@ -43,59 +43,69 @@ export default function Sidebar({ children }) {
   }
 
   return (
-    <aside 
-      className="h-screen"
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
-    >
-      <nav className="h-full flex flex-col bg-white border-r shadow-sm">
-        <div className="p-4 pb-2 flex justify-between items-center">
-          <img
-            src="https://img.logoipsum.com/243.svg"
-            className={`overflow-hidden transition-all ${
-              expanded ? "w-32" : "w-0"
-            }`}
-            alt=""
-          />
-        </div>
+    <>
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/40 z-10"
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
+      )}
 
-        <SidebarContext.Provider value={{ expanded }}>
-          <ul className="flex-1 px-3">{children}</ul>
-        </SidebarContext.Provider>
-
-        {session ? (
-          <div className="border-t flex p-3 items-center">
+      {/* Sidebar */}
+      <aside 
+        className={`
+          fixed md:static h-screen bg-white border-r shadow-sm 
+          transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0 z-20
+        `}
+      >
+        <nav className="h-full flex flex-col">
+          <div className="p-4 pb-2 flex justify-between items-center">
             <img
-              src={session.user.user_metadata.avatar_url || 'https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=' + (session.user.user_metadata.full_name || session.user.email)}
+              src="https://img.logoipsum.com/243.svg"
+              className={`overflow-hidden transition-all ${
+                expanded ? "w-32" : "w-0"
+              }`}
               alt=""
-              className="w-10 h-10 rounded-md"
             />
-            <div className={`flex-1 ml-3 overflow-hidden transition-all ${expanded ? "w-auto" : "w-0"}`}>
-              <div className="leading-4">
-                <h4 className="font-semibold truncate">{session.user.user_metadata.full_name || session.user.email}</h4>
-                <span className="text-xs text-gray-600">{session.user.email}</span>
-              </div>
-            </div>
-            <div className="relative group">
+            <button onClick={() => setExpanded(curr => !curr)} className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 hidden md:block">
+              {expanded ? <ChevronLeft /> : <ChevronRight />}
+            </button>
+            <button onClick={() => setMobileMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 md:hidden">
+              <X />
+            </button>
+          </div>
+
+          <SidebarContext.Provider value={{ expanded }}>
+            <ul className="flex-1 px-3">{children}</ul>
+          </SidebarContext.Provider>
+
+          {session ? (
+            <div className="border-t flex p-3 items-center">
+              <img
+                src={session.user.user_metadata.avatar_url || 'https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=' + (session.user.user_metadata.full_name || session.user.email)}
+                alt=""
+                className="w-10 h-10 rounded-md"
+              />
+              <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
+                <div className="leading-4 flex-1 truncate">
+                  <h4 className="font-semibold truncate">{session.user.user_metadata.full_name || session.user.email}</h4>
+                </div>
                 <button onClick={handleSignOut} className="p-1.5 rounded-lg hover:bg-gray-100">
                     <LogOut size={20} />
                 </button>
-                {!expanded && (
-                <div
-                    className="absolute top-1/2 -translate-y-1/2 left-full rounded-md px-2 py-1 ml-2 bg-indigo-100 text-indigo-800 text-sm whitespace-nowrap invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0"
-                >
-                    Sign Out
-                </div>
-                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="border-t p-3">
-            {/* Not logged in */}
-          </div>
-        )}
-      </nav>
-    </aside>
+          ) : (
+            <div className="border-t p-3">
+              {/* Not logged in */}
+            </div>
+          )}
+        </nav>
+      </aside>
+    </>
   )
 }
 
@@ -139,7 +149,7 @@ export function SidebarItem({ icon, text, active, alert, href = '#', target }) {
         <div
           className={`
             absolute left-full rounded-md px-2 py-1 ml-6
-            bg-indigo-100 text-indigo-800 text-sm
+            bg-indigo-100 text-indigo-800 text-sm whitespace-nowrap
             invisible opacity-20 -translate-x-3 transition-all
             group-hover:visible group-hover:opacity-100 group-hover:translate-x-0
           `}

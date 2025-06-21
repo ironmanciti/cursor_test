@@ -1,7 +1,10 @@
+'use client'
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar, { SidebarItem } from "../components/Sidebar";
-import { Home, LayoutDashboard, Play, Database } from "lucide-react";
+import { Home, LayoutDashboard, Play, Database, Menu } from "lucide-react";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,11 +14,13 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <div className="flex">
-          <Sidebar>
+          <Sidebar isMobileMenuOpen={isMobileMenuOpen} setMobileMenuOpen={setIsMobileMenuOpen}>
             <SidebarItem icon={<Home size={20} />} text="Home" href="/" />
             <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" href="/dashboard" />
             <SidebarItem icon={<Play size={20} />} text="Playground" href="/playground" />
@@ -27,9 +32,17 @@ export default function RootLayout({ children }) {
               target="_blank" 
             />
           </Sidebar>
-          <main className="flex-1">
-            {children}
-          </main>
+          <div className="flex-1 flex flex-col">
+            <div className="md:hidden flex items-center justify-between p-4 border-b">
+              <img src="https://img.logoipsum.com/243.svg" className="w-24" alt="logo" />
+              <button onClick={() => setIsMobileMenuOpen(true)}>
+                <Menu size={24} />
+              </button>
+            </div>
+            <main className="flex-1 bg-gray-50">
+              {children}
+            </main>
+          </div>
         </div>
       </body>
     </html>

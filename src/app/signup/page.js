@@ -51,7 +51,7 @@ export default function SignUp() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <div className="p-8 bg-white shadow-md rounded-lg text-center">
+        <div className="p-6 sm:p-8 bg-white shadow-md rounded-lg text-center">
           <h1 className="text-2xl font-bold text-green-600 mb-4">Registration Successful!</h1>
           <p>A confirmation link has been sent to your email address.</p>
           <p className="mt-2">Please check your inbox to complete the sign-up.</p>
@@ -68,7 +68,7 @@ export default function SignUp() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-lg">
+      <div className="w-full max-w-md p-6 sm:p-8 space-y-6 bg-white shadow-md rounded-lg">
         <h1 className="text-2xl font-bold text-center">Create an Account</h1>
         <form onSubmit={handleSignUp} className="space-y-6">
           <div>

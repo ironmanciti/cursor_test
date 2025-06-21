@@ -70,14 +70,14 @@ export default function Playground() {
 
   return (
     <div className="font-sans text-gray-900">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">API Key Playground</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">API Key Playground</h1>
           <p className="text-gray-600">입력한 API 키가 유효한지(저장되어 있는지) 확인합니다.</p>
         </div>
 
         {/* API 키 입력 */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">API 키 확인</h2>
           
           {isLoadingKeys ? (
@@ -127,7 +127,7 @@ export default function Playground() {
 
         {/* 확인 결과 */}
         {checkResult && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">확인 결과</h2>
             
             <div className={`p-4 rounded-lg border ${
@@ -159,7 +159,7 @@ export default function Playground() {
         )}
 
         {/* 사용법 안내 */}
-        <div className="bg-blue-50 rounded-lg border border-blue-200 p-6 mt-6">
+        <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 sm:p-6 mt-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">사용법</h3>
           <ul className="text-blue-800 space-y-2 text-sm">
             <li>• 가지고 있는 API 키를 입력창에 붙여넣습니다.</li>
