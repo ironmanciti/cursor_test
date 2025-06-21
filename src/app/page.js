@@ -1,18 +1,61 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react"
+import { createClient } from '@supabase/supabase-js';
 import { LayoutDashboard, Play, Home as HomeIcon } from "lucide-react";
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
 export default function Home() {
-  const { data: session } = useSession()
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setLoading(false);
+    };
+
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  async function handleGoogleSignIn() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: location.origin
+      }
+    });
+  }
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  }
 
   if(session) {
+    const user = session.user;
+    const displayName = user.user_metadata?.full_name || user.email;
+
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-2">Welcome back, {session.user.name}!</h1>
+          <h1 className="text-4xl font-bold mb-2">Welcome back, {displayName}!</h1>
           <p className="text-gray-600">Where would you like to go?</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
@@ -37,23 +80,25 @@ export default function Home() {
   }
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <div className="flex flex-col gap-4">
-          <p className="text-center sm:text-left">
-            Not signed in
-          </p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-sm p-8 space-y-8 bg-white shadow-lg rounded-2xl text-center">
+        <div>
+          <Image
+            className="dark:invert mx-auto mb-6"
+            src="/next.svg"
+            alt="Next.js logo"
+            width={180}
+            height={38}
+            priority
+          />
+          <h1 className="text-2xl font-bold">Welcome</h1>
+          <p className="text-gray-500 mt-2">Choose how you want to sign in</p>
+        </div>
+        
+        <div className="space-y-4">
           <button 
-            onClick={() => signIn('google')}
-            className="rounded-full bg-blue-600 text-white px-5 py-2.5 font-medium hover:bg-blue-700 flex items-center justify-center gap-2 whitespace-nowrap"
+            onClick={handleGoogleSignIn}
+            className="w-full rounded-lg bg-blue-600 text-white px-5 py-3 font-medium hover:bg-blue-700 flex items-center justify-center gap-2 whitespace-nowrap"
           >
             <Image 
               src="/google-logo.svg"
@@ -63,55 +108,22 @@ export default function Home() {
             />
             Sign in with Google
           </button>
+
+          <Link
+            href="/login"
+            className="block w-full rounded-lg bg-gray-700 text-white px-5 py-3 font-medium hover:bg-gray-800"
+          >
+            Sign in with Email
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="text-sm">
+          <span className="text-gray-600">Don't have an account? </span>
+          <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Sign up
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

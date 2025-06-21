@@ -1,8 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar, { SidebarItem } from "../components/Sidebar";
-import { Home, LayoutDashboard, Play } from "lucide-react";
-import Providers from "./components/Providers";
+import { Home, LayoutDashboard, Play, Database } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,18 +14,23 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          <div className="flex">
-            <Sidebar>
-              <SidebarItem icon={<Home size={20} />} text="Home" href="/" />
-              <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" href="/dashboard" />
-              <SidebarItem icon={<Play size={20} />} text="Playground" href="/playground" />
-            </Sidebar>
-            <main className="flex-1">
-              {children}
-            </main>
-          </div>
-        </Providers>
+        <div className="flex">
+          <Sidebar>
+            <SidebarItem icon={<Home size={20} />} text="Home" href="/" />
+            <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" href="/dashboard" />
+            <SidebarItem icon={<Play size={20} />} text="Playground" href="/playground" />
+            <li className="my-3"><hr className="border-gray-200" /></li>
+            <SidebarItem 
+              icon={<Database size={20} />} 
+              text="Supabase Data" 
+              href="https://app.supabase.com/" 
+              target="_blank" 
+            />
+          </Sidebar>
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
